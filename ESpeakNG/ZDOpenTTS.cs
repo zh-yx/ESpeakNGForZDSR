@@ -15,18 +15,21 @@ public static class ZDOpenTTS
     [return: MarshalAs(UnmanagedType.Bool)]
     public static bool Initial()
     {
-        return true;
+        return ESpeakTTS.Initialize();
     }
 
     [UnmanagedCallersOnly(EntryPoint = "GetVoiceCount")]
     public static int GetVoiceCount()
     {
-        return 0;
+        return ESpeakTTS.GetVoiceCount();
     }
 
     [UnmanagedCallersOnly(EntryPoint = "GetVoiceName")]
     public static void GetVoiceName(int vid, IntPtr voiceNameBuffer)
     {
+        string name = ESpeakTTS.GetVoiceName(vid);
+        Marshal.Copy(name.ToCharArray(), 0, voiceNameBuffer, name.Length);
+        Marshal.WriteInt16(voiceNameBuffer + name.Length * sizeof(char), '\0');
     }
 
     [UnmanagedCallersOnly(EntryPoint = "SetResponseSpeed")]
@@ -37,13 +40,14 @@ public static class ZDOpenTTS
     [UnmanagedCallersOnly(EntryPoint = "SetParam")]
     public static void SetParam(int type, int value)
     {
+        ESpeakTTS.SetParam(type, value);
     }
 
     [UnmanagedCallersOnly(EntryPoint = "IsSpeaking")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static bool IsSpeaking()
     {
-        return false;
+        return ESpeakTTS.IsSpeaking();
     }
 
     [UnmanagedCallersOnly(EntryPoint = "IsControlNumricType")]
@@ -56,11 +60,15 @@ public static class ZDOpenTTS
     [UnmanagedCallersOnly(EntryPoint = "Speak")]
     public static void Speak(IntPtr textPtr, int pitch)
     {
+        string? text = Marshal.PtrToStringUni(textPtr);
+        if (text == null) return;
+        ESpeakTTS.Speak(text);
     }
 
     [UnmanagedCallersOnly(EntryPoint = "Stop")]
     public static void Stop()
     {
+        ESpeakTTS.Stop();
     }
 
     [UnmanagedCallersOnly(EntryPoint = "Pause")]
