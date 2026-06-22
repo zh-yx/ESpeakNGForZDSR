@@ -61,6 +61,21 @@ internal partial class ESpeakApi
         NativeMethods.espeak_SetVoiceByName(voiceName);
     }
 
+    public static int GetParameter(EspeakParameter paramType)
+    {
+        return NativeMethods.espeak_GetParameter(paramType, true);
+    }
+
+    public static void SetParameter(EspeakParameter paramType, int value)
+    {
+        NativeMethods.espeak_SetParameter(paramType, value, false);
+    }
+
+    public static void Synth(string text)
+    {
+        NativeMethods.espeak_Synth(text, IntPtr.Zero, 0, 0, 0, ESPEAK_CHARS_UTF8, out int _, IntPtr.Zero);
+    }
+
     public static void Terminate()
     {
         NativeMethods.espeak_Terminate();

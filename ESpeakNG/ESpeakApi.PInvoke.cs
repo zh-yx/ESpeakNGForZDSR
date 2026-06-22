@@ -5,11 +5,26 @@ namespace ESpeakNG;
 
 internal partial class ESpeakApi
 {
+    public const string ESPEAK_DEFAULT_VOICE = "en";
+    public const int ESPEAK_RATE_MINIMUM = 80;
+    public const int ESPEAK_RATE_MAXIMUM = 450;
     private const int ESPEAK_AUDIO_OUTPUT_SYNCHRONOUS = 0x0002;
     private const int ESPEAK_INITIALIZE_DONT_EXIT = 0x8000;
     private const int ESPEAK_SYNTH_CALLBACK_CONTINUE = 0;
     private const int ESPEAK_SYNTH_CALLBACK_ABORT = 1;
     private const int ESPEAK_CHARS_UTF8 = 0x0001;
+
+    public enum EspeakParameter
+    {
+        Rate = 1,
+        Volume = 2,
+        Pitch = 3,
+        Range = 4,
+        Punctuation = 5,
+        Capitals = 6,
+        WordGap = 7,
+        Intonation = 9,
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct EspeakVoice
@@ -46,6 +61,12 @@ internal partial class ESpeakApi
 
         [DllImport(libESpeakNGName, CallingConvention = CallingConvention.Cdecl)]
         public static extern int espeak_SetVoiceByName([MarshalAs(UnmanagedType.LPUTF8Str)] string name);
+
+        [DllImport(libESpeakNGName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int espeak_GetParameter(EspeakParameter parameter, bool current);
+
+        [DllImport(libESpeakNGName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int espeak_SetParameter(EspeakParameter parameter, int value, bool relative);
 
         [DllImport(libESpeakNGName, CallingConvention = CallingConvention.Cdecl)]
         public static extern int espeak_Synth([MarshalAs(UnmanagedType.LPUTF8Str)] string text, IntPtr size, int position, int positionType, int endPosition, int flags, out int uniqueIdentifier, IntPtr userData);
