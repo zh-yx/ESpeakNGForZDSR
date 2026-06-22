@@ -101,5 +101,6 @@ public static class ZDOpenTTS
     [UnmanagedCallersOnly(EntryPoint = "UnInitial")]
     public static void UnInitial()
     {
+        ESpeakTTS.UnInitialize();
     }
 }

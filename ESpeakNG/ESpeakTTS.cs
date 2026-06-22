@@ -105,4 +105,12 @@ internal static class ESpeakTTS
         _stopSpeak = true;
         _wavePlayer?.Reset();
     }
+
+    public static void UnInitialize()
+    {
+        ESpeakApi.Terminate();
+        _voiceNames = null;
+        _wavePlayer?.Dispose();
+        _wavePlayer = null;
+    }
 }
