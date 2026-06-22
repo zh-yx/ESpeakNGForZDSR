@@ -62,7 +62,7 @@ public static class ZDOpenTTS
     {
         string? text = Marshal.PtrToStringUni(textPtr);
         if (text == null) return;
-        ESpeakTTS.Speak(text);
+        ESpeakTTS.Speak(text, pitch);
     }
 
     [UnmanagedCallersOnly(EntryPoint = "Stop")]

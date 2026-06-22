@@ -20,14 +20,18 @@ internal static class ESpeakTTS
         return true;
     }
 
-    private static void SpeakTextAsync(string text)
+    private static void SpeakTextAsync(string text, int pitch)
     {
         lock (_lockObj)
         {
+            bool pitchFlag = pitch >= 0 && pitch <= 100; // Out of range values indicate don't set pitch value, for example -1.
+            int pitchValue = ESpeakApi.GetParameter(ESpeakApi.EspeakParameter.Pitch);
+            if (pitchFlag) ESpeakApi.SetParameter(ESpeakApi.EspeakParameter.Pitch, pitch);
             _isSpeaking = true;
             _stopSpeak = false;
             ESpeakApi.Synth(text);
             _isSpeaking = false;
+            if (pitchFlag) ESpeakApi.SetParameter(ESpeakApi.EspeakParameter.Pitch, pitchValue);
         }
     }
 
@@ -95,9 +99,9 @@ internal static class ESpeakTTS
         return _isSpeaking;
     }
 
-    public static void Speak(string text)
+    public static void Speak(string text, int pitch)
     {
-        _ = Task.Run(() => SpeakTextAsync(text)).ConfigureAwait(false);
+        _ = Task.Run(() => SpeakTextAsync(text, pitch)).ConfigureAwait(false);
     }
 
     public static void Stop()
