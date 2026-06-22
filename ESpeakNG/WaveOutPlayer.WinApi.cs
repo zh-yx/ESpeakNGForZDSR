@@ -6,10 +6,10 @@ namespace ESpeakNG;
 
 internal partial class WaveOutPlayer
 {
+    public const int WAVE_MAPPER = -1;
     private const int MMSYSERR_NOERROR = 0;
     private const int CALLBACK_EVENT = 0x00050000;
     private const short WAVE_FORMAT_PCM = 1;
-    private const int WAVE_MAPPER = -1;
     private const int WHDR_DONE = 0x00000001;
     private const int WHDR_PREPARED = 0x00000002;
 

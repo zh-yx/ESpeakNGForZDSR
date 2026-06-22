@@ -25,6 +25,8 @@ internal partial class WaveOutPlayer : IDisposable
         _playbackCompleteEvent = new AutoResetEvent(false);
     }
 
+    public bool IsOpen => _handleWaveOut != IntPtr.Zero;
+
     public void Open(int deviceId = WAVE_MAPPER)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
