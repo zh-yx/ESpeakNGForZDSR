@@ -6,8 +6,9 @@ namespace ESpeakNG;
 internal static class ESpeakTTS
 {
     private const int _bufferLength = 100;
-    private const string _dateDirname = "espeak-ng-data";
+    private const string _dataDirname = "espeak-ng-data";
     private static readonly object _lockObj = new object();
+    private static int _sampleRate;
     private static ESpeakApi.VoiceInfo[]? _voiceInfos;
     private static WaveOutPlayer? _wavePlayer;
     private static volatile bool _stopSpeak;
@@ -44,11 +45,11 @@ internal static class ESpeakTTS
 
     public static bool Initialize()
     {
-        string? dataPath = Utility.FindOnPath(_dateDirname);
+        string? dataPath = Utility.FindOnPath(_dataDirname);
         if (dataPath == null) return false;
-        if (ESpeakApi.Initialize(dataPath, _bufferLength, DataReceiver, out int rate))
+        if (ESpeakApi.Initialize(dataPath, _bufferLength, DataReceiver, out _sampleRate))
         {
-            _wavePlayer = new WaveOutPlayer(1, rate, 16); // 1 channel, 16 bit per sample.
+            _wavePlayer = new WaveOutPlayer(1, _sampleRate, 16); // 1 channel, 16 bit per sample.
             _wavePlayer.Open();
             return true;
         }
@@ -108,6 +109,12 @@ internal static class ESpeakTTS
     {
         _stopSpeak = true;
         _wavePlayer?.Reset();
+    }
+
+    public static int GetAudioFormat(out int bitPerSample)
+    {
+        bitPerSample = 16; // EspeakNG generates the audio of 16 bit  per sample.
+        return _sampleRate;
     }
 
     public static void UnInitialize()

@@ -87,7 +87,9 @@ public static class ZDOpenTTS
     [UnmanagedCallersOnly(EntryPoint = "GetAudioFormat")]
     public static int GetAudioFormat(IntPtr ptrBitsPerSample)
     {
-        return 0;
+        int sampleRate = ESpeakTTS.GetAudioFormat(out int bitPerSample);
+        Marshal.WriteInt32(ptrBitsPerSample, bitPerSample);
+        return sampleRate;
     }
 
     [UnmanagedCallersOnly(EntryPoint = "TextToAudio")]
