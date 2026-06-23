@@ -95,7 +95,11 @@ public static class ZDOpenTTS
     [UnmanagedCallersOnly(EntryPoint = "TextToAudio")]
     public static int TextToAudio(IntPtr textPtr, IntPtr bufferPtr)
     {
-        return 0;
+        string? text = Marshal.PtrToStringUni(textPtr);
+        if (text == null) return 0;
+        int numSample = ESpeakTTS.TextToAudio(text, out IntPtr buffer);
+        Marshal.WriteIntPtr(bufferPtr, buffer);
+        return numSample;
     }
 
     [UnmanagedCallersOnly(EntryPoint = "OpenSettings")]
