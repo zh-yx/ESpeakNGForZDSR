@@ -15,6 +15,9 @@ public static class ZDOpenTTS
     [return: MarshalAs(UnmanagedType.Bool)]
     public static bool Initial()
     {
+        // TODO: Path strings should not be hard coding.
+        string workPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "zdsr", "common", "opentts", nameof(ESpeakNG));
+        Utility.EnsurePath(workPath);
         return ESpeakTTS.Initialize();
     }
 
