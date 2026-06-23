@@ -8,7 +8,7 @@ internal static class ESpeakTTS
     private const int _bufferLength = 100;
     private const string _dateDirname = "espeak-ng-data";
     private static readonly object _lockObj = new object();
-    private static string[]? _voiceNames;
+    private static ESpeakApi.VoiceInfo[]? _voiceInfos;
     private static WaveOutPlayer? _wavePlayer;
     private static volatile bool _stopSpeak;
     private static bool _isSpeaking;
@@ -57,14 +57,13 @@ internal static class ESpeakTTS
 
     public static int GetVoiceCount()
     {
-        _voiceNames = ESpeakApi.ListVoiceNames().ToArray();
-        return _voiceNames.Length;
+        _voiceInfos = ESpeakApi.ListVoiceInfos().ToArray();
+        return _voiceInfos.Length;
     }
 
     public static string GetVoiceName(int index)
     {
-        if (_voiceNames == null || index < 0 || index >= _voiceNames.Length || _voiceNames[index] == null) return ESpeakApi.ESPEAK_DEFAULT_VOICE;
-        return _voiceNames[index];
+        return _voiceInfos?[index].ToString() ?? $"{nameof(ESpeakNG)} voice {index}";
     }
 
     public static void SetParam(int type, int value)
@@ -72,7 +71,8 @@ internal static class ESpeakTTS
         switch (type)
         {
             case 0:
-                ESpeakApi.SetVoiceByName(GetVoiceName(value));
+                string id = _voiceInfos?[value].Identifier ?? ESpeakApi.ESPEAK_DEFAULT_VOICE;
+                ESpeakApi.SetVoiceByName(id);
                 break;
             case 1:
                 const int rateRange = ESpeakApi.ESPEAK_RATE_MAXIMUM - ESpeakApi.ESPEAK_RATE_MINIMUM;
@@ -113,7 +113,7 @@ internal static class ESpeakTTS
     public static void UnInitialize()
     {
         ESpeakApi.Terminate();
-        _voiceNames = null;
+        _voiceInfos = null;
         _wavePlayer?.Dispose();
         _wavePlayer = null;
     }

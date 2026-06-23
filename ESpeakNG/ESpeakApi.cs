@@ -38,7 +38,7 @@ internal partial class ESpeakApi
         return version;
     }
 
-    public static IEnumerable<string> ListVoiceNames()
+    public static IEnumerable<VoiceInfo> ListVoiceInfos()
     {
         IntPtr voicesPtr = NativeMethods.espeak_ListVoices(IntPtr.Zero);
         if (voicesPtr == IntPtr.Zero) yield break;
@@ -48,10 +48,9 @@ internal partial class ESpeakApi
             IntPtr voicePtr = Marshal.ReadIntPtr(voicesPtr, IntPtr.Size * i);
             if (voicePtr == IntPtr.Zero) yield break;
 
-            EspeakVoice voice = Marshal.PtrToStructure<EspeakVoice>(voicePtr);
-            string? name = Marshal.PtrToStringUTF8(voice.NamePtr);
-            if (name == null) continue;
-            yield return name;
+            VoiceInfo? info = VoiceInfo.ParseFromPtr(voicePtr);
+            if (info == null) continue;
+            yield return info;
             i++;
         }
     }
